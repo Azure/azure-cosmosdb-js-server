@@ -14,7 +14,7 @@ This repo contains samples for building these server-side scripts using that ser
 
 ## Videos
 
-* <a href="https://channel9.msdn.com/Blogs/Windows-Azure/Azure-Demo-A-Quick-Intro-to-Azure-DocumentDBs-Server-Side-Javascript"><img src="http://acom.azurecomcdn.net/80C57D/blogmedia/blogmedia/2015/04/20/video-thumbnail-280x160.png"/></a>
+<a href="https://channel9.msdn.com/Blogs/Windows-Azure/Azure-Demo-A-Quick-Intro-to-Azure-DocumentDBs-Server-Side-Javascript"><img src="http://acom.azurecomcdn.net/80C57D/blogmedia/blogmedia/2015/04/20/video-thumbnail-280x160.png"/></a>
 
 
 ## Share
