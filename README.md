@@ -1,12 +1,12 @@
-#Microsoft Azure DocumentDB SDK: Javascript Server
+# Microsoft Azure DocumentDB's Server-Side JavaScript
 
-Azure DocumentDB is a NoSQL document database service designed from the ground up to natively support JSON and JavaScript directly inside the database engine. DocumentDB supports server-side programming of Stored Procedures, Triggers and User Defined Functions (UDFs). This server-side programming is done in JavaScript using a SDK built specifically for running on the DocumentDB servers.
-
-This repo contains samples for building these server-side scripts using that server SDK and other useful utilities for working with these.
+DocumentDB’s language integrated, transactional execution of JavaScript supports stored procedures, triggers and user defined functions (UDFs) written natively in JavaScript. This allows developers to write application logic which can be shipped and executed directly on the database storage partitions. JavaScript support at the server side has a number of intrinsic advantages that can be utilized to build rich applications.
 
 ## Documentation
 
 * Official documentation can be found the [Azure website](http://azure.microsoft.com/en-us/documentation/articles/documentdb-programming/)
+
+* JSDocs for the Server-Side JavaScript SDK can be found [here](http://azure.github.io/azure-documentdb-js-server/)
 
 * .NET sample code for creating and executing a sproc can be found on our [.NET GitHub repo](https://github.com/Azure/azure-documentdb-net/tree/master/samples/code-samples/ServerSideScripts).
 
