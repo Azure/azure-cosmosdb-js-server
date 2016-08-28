@@ -1,12 +1,5 @@
-/* global __ */
-/* eslint-disable
-  func-style,
-  no-param-reassign,
-  object-shorthand
-*/
-
 /**
- * A stored procedure for Azure DocumentDB which gets a count of the session documents
+ * A stored procedure for Azure DocumentDB which gets a count of the session documents using the .filter() method of the collection.
  * @function
  * @param  {String} filterOn = 'type'         The key to filter documents on for deletion.
  * @param  {String} filterValue = 'session'   The value that a document's filter key must have to be counted
