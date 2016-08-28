@@ -1,14 +1,5 @@
-/* global __ */
-
-/* eslint-disable
-   func-style,
-   no-param-reassign,
-   no-magic-numbers,
-   no-underscore-dangle
-*/
-
 /**
- * A stored procedure for Azure DocumentDB which deletes documents with a specified filter
+ * A stored procedure for Azure DocumentDB which deletes documents with a specified filter key and value
  * @function
  * @param  {String} filterOn = 'type'         The key to filter documents on for deletion.
  * @param  {String} filterValue = 'session'   The value that a document's filter key must have to be deleted
