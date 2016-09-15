@@ -1,15 +1,13 @@
 /**
  * A stored procedure for Azure DocumentDB which deletes documents with a specified filter key and value
  * @function
- * @param  {String} filterOn = 'type'         The key to filter documents on for deletion.
- * @param  {String} filterValue = ''   The value that a document's filter key must have to be deleted
+ * @param  {Object} filterObj = {}      An object containing the attributes and values to filter documents on. A document must have each of the matching attributes and values in this object to be deleted. A special case is made for a value of 'any'. This will delete documents which have the given attribute, regardless of its value. Passing an empty or undefined filterObj will delete all the documents in the collection.
  * @return {responseBody}
  */
-function clear(filterOn, filterValue) {
+function clear(filterObj) {
 
-  // set default filter key and value
-  filterOn = filterOn || 'type';
-  filterValue = filterValue || '';
+  // set default filter object
+  filterObj = filterObj || {};
 
   const response = __.response; // get the response object
 
@@ -100,7 +98,10 @@ function clear(filterOn, filterValue) {
     // NB: The filter function must be inlined in order to take advantage of index
     // (otherwise it will be a full scan).
     const accepted = __.filter(function filter(doc) {
-      return doc[filterOn] === filterValue;
+      return Object.keys(filterObj).every(function checkProperty(filterKey) {
+        return doc.hasOwnProperty(filterKey)
+            && (doc[filterKey] === filterObj[filterKey] || filterKey === 'any');
+      });
     }, { continuation: continuationToken }, handler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation

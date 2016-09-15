@@ -1,19 +1,16 @@
 /**
  * A stored procedure for Azure DocumentDB which gets a count of documents in a collection using the .filter() method of the collection.
  * @function
- * @param  {String} filterOn = 'type'         The key to filter documents on for counting.
- * @param  {String} filterValue = ''   The value that a document's filter key must have to be counted
+ * @param  {Object} filterObj = {}          An object containing the attributes and values to filter documents on. A document must have each of the matching attributes and values in this object to be returned. A special case is made for a value of 'any'. This will return documents which have the given attribute, regardless of its value.
  * @param  {String} [continuationToken]       The previous continuation token, if any was passed
  * @return {responseBody}
  */
-function length(filterOn, filterValue, continuationToken) {
+function length(filterObj, continuationToken) {
 
-  // set default filter key and value
-  filterOn = filterOn || 'type';
-  filterValue = filterValue || '';
+  // set default filter object
+  filterObj = filterObj || {};
 
   const response = __.response; // get the response object
-  let documentsFound = 0;
 
   /**
    * The response body returned by the stored procedure
@@ -24,7 +21,7 @@ function length(filterOn, filterValue, continuationToken) {
    * @prop {Boolean} continuation   Whether there are still more documents to find.
    */
   const responseBody = {
-    documentsFound: documentsFound,
+    documentsFound: 0,
     continuation: false,
   };
 
@@ -50,7 +47,7 @@ function length(filterOn, filterValue, continuationToken) {
       if (err) throw err;
 
       // if documents were found, add them to the running documents total
-      documentsFound += docs.length;
+      responseBody.documentsFound += docs.length;
 
       if (info.continuation) {
         // if there was a continuation token, get the next set of results
@@ -62,9 +59,12 @@ function length(filterOn, filterValue, continuationToken) {
 
     };
 
-    // filter the collection for documents using the filter function
+    // filter the collection for documents using the filter object
     const accepted = __.filter(function filter(doc) {
-      return doc[filterOn] === filterValue;
+      return Object.keys(filterObj).every(function checkProperty(filterKey) {
+        return doc.hasOwnProperty(filterKey)
+            && (doc[filterKey] === filterObj[filterKey] || filterKey === 'any');
+      });
     }, { continuation: continuationToken }, handler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation
