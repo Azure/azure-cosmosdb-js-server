@@ -36,16 +36,6 @@ function length(filterOn, filterValue, continuationToken) {
   function getSessions(continuationToken) {
 
     /**
-     * The filter function that returns a doc only if it has the given filter {@link filterOn} and {@link filterValue}
-     * @function
-     * @param  {Object} doc  The DocumentDB document to test against
-     * @return {Boolean}     Whether the document has the given filter key and value
-     */
-    const filter = function filter(doc) {
-      return doc[filterOn] === filterValue;
-    };
-
-    /**
      * Handler for the filter request.
      * @function
      * @param  {Object} err                 The error object, if any was thrown
@@ -73,7 +63,9 @@ function length(filterOn, filterValue, continuationToken) {
     };
 
     // filter the collection for sessions using the filter function
-    const accepted = __.filter(filter, { continuation: continuationToken }, handler);
+    const accepted = __.filter(function filter(doc) {
+      return doc[filterOn] === filterValue;
+    }, { continuation: continuationToken }, handler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation
     if (!accepted) {
