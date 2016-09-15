@@ -1,8 +1,8 @@
 /**
- * A stored procedure for Azure DocumentDB which gets a count of the session documents using the .filter() method of the collection.
+ * A stored procedure for Azure DocumentDB which gets a count of documents in a collection using the .filter() method of the collection.
  * @function
  * @param  {String} filterOn = 'type'         The key to filter documents on for counting.
- * @param  {String} filterValue = 'session'   The value that a document's filter key must have to be counted
+ * @param  {String} filterValue = ''   The value that a document's filter key must have to be counted
  * @param  {String} [continuationToken]       The previous continuation token, if any was passed
  * @return {responseBody}
  */
@@ -10,7 +10,7 @@ function length(filterOn, filterValue, continuationToken) {
 
   // set default filter key and value
   filterOn = filterOn || 'type';
-  filterValue = filterValue || 'session';
+  filterValue = filterValue || '';
 
   const response = __.response; // get the response object
   let documentsFound = 0;
@@ -29,11 +29,11 @@ function length(filterOn, filterValue, continuationToken) {
   };
 
   /**
-   * Filters for session documents based on the provider filter key {@link filterOn} and value {@link filterValue}, and adds the number of results to the running count
+   * Filters for documents based on the provided filter key {@link filterOn} and value {@link filterValue}, and adds the number of results to the running count
    * @function
    * @param  {String} continuationToken   The continuation token, if one was received from the previous request
    */
-  function getSessions(continuationToken) {
+  function getDocuments(continuationToken) {
 
     /**
      * Handler for the filter request.
@@ -41,20 +41,20 @@ function length(filterOn, filterValue, continuationToken) {
      * @param  {Object} err                 The error object, if any was thrown
      * @param  {Number} err.number          The error code
      * @param  {String} err.body            The body of the error message
-     * @param  {Array} sessions             An array of the retrieved sessions
+     * @param  {Array} docs                 An array of the retrieved documents
      * @param  {Object} info                Info about the request, including a continuation token
      * @param  {String} info.continuation   The continuation token, if any was passed
      * @return {responseBody}
      */
-    const handler = function handler(err, sessions, info) {
+    const handler = function handler(err, docs, info) {
       if (err) throw err;
 
-      // if sessions were found, add them to the running documents total
-      documentsFound += sessions.length;
+      // if documents were found, add them to the running documents total
+      documentsFound += docs.length;
 
       if (info.continuation) {
         // if there was a continuation token, get the next set of results
-        getSessions(info.continuation);
+        getDocuments(info.continuation);
       } else {
         // otherwise, return the response body, including the count of the results
         response.setBody(responseBody);
@@ -62,7 +62,7 @@ function length(filterOn, filterValue, continuationToken) {
 
     };
 
-    // filter the collection for sessions using the filter function
+    // filter the collection for documents using the filter function
     const accepted = __.filter(function filter(doc) {
       return doc[filterOn] === filterValue;
     }, { continuation: continuationToken }, handler);
@@ -75,6 +75,6 @@ function length(filterOn, filterValue, continuationToken) {
 
   }
 
-  getSessions(continuationToken);
+  getDocuments(continuationToken);
 
 }

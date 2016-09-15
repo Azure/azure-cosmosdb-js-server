@@ -2,14 +2,14 @@
  * A stored procedure for Azure DocumentDB which deletes documents with a specified filter key and value
  * @function
  * @param  {String} filterOn = 'type'         The key to filter documents on for deletion.
- * @param  {String} filterValue = 'session'   The value that a document's filter key must have to be deleted
+ * @param  {String} filterValue = ''   The value that a document's filter key must have to be deleted
  * @return {responseBody}
  */
 function clear(filterOn, filterValue) {
 
   // set default filter key and value
   filterOn = filterOn || 'type';
-  filterValue = filterValue || 'session';
+  filterValue = filterValue || '';
 
   const response = __.response; // get the response object
 
@@ -27,20 +27,20 @@ function clear(filterOn, filterValue) {
   };
 
   /**
-   * Recursively deletes each session in an array, and then attempts to get more to delete
+   * Recursively deletes each document in an array, and then attempts to get more to delete
    * @function
-   * @param  {Array} sessions  The array of session documents to delete
+   * @param  {Array} docs  The array of documents to delete
    */
-  function deleteSessions(sessions) {
-    if (sessions.length > 0) {
+  function deleteDocuments(docs) {
+    if (docs.length > 0) {
 
       // attempt to delete the first document in the array
-      const accepted = __.deleteDocument(sessions[0]._self, function handler(err) {
+      const accepted = __.deleteDocument(docs[0]._self, function handler(err) {
         if (err) throw err;
 
         responseBody.deleted++;   // increment deleted counter
-        sessions.shift();         // remove document from array
-        deleteSessions(sessions); // delete the next doc
+        docs.shift();         // remove document from array
+        deleteDocuments(docs); // delete the next doc
 
       });
 
@@ -50,17 +50,17 @@ function clear(filterOn, filterValue) {
     } else {
 
       // if there are no more documents to delete, try getting more
-      getSessions();
+      getDocuments();
 
     }
   }
 
   /**
-   * Filters for session documents based on the provided filter key and value ({@link filterOn}, {@link filterValue}), and immediately begins deleting them as results are returned
+   * Filters for documents based on the provided filter key and value ({@link filterOn}, {@link filterValue}), and immediately begins deleting them as results are returned
    * @function
    * @param {String} [continuationToken]   A continuation token, if one was received from a previous request
    */
-  function getSessions(continuationToken) {
+  function getDocuments(continuationToken) {
 
     /**
      * Handler for the filter request
@@ -68,23 +68,23 @@ function clear(filterOn, filterValue) {
      * @param  {Object} err                 The error object, if any was thrown
      * @param  {Number} err.number          The error code
      * @param  {String} err.body            The body of the error message
-     * @param  {Array} sessions             The retrieved sessions
+     * @param  {Array} docs                 The retrieved documents
      * @param  {Object} info                Info about the request, including a continuation token
      * @param  {String} info.continuation   The continuation token, if any was passed
      * @return {responseBody}
      */
-    const handler = function handler(err, sessions, info) {
+    const handler = function handler(err, docs, info) {
       if (err) throw err;
 
-      if (sessions.length > 0) {
+      if (docs.length > 0) {
 
-        // if sessions were found, begin deleting them immediately (prioritizes deletion over searching)
-        deleteSessions(sessions);
+        // if documents were found, begin deleting them immediately (prioritizes deletion over searching)
+        deleteDocuments(docs);
 
       } else if (info.continuation) {
 
         // if the filter came back empty but with a continuation token, get the next set of results
-        getSessions(info.continuation);
+        getDocuments(info.continuation);
 
       } else {
 
@@ -96,7 +96,7 @@ function clear(filterOn, filterValue) {
 
     };
 
-    // filter the collection for sessions using a filter function
+    // filter the collection for documents using a filter function
     // NB: The filter function must be inlined in order to take advantage of index
     // (otherwise it will be a full scan).
     const accepted = __.filter(function filter(doc) {
@@ -108,6 +108,6 @@ function clear(filterOn, filterValue) {
 
   }
 
-  getSessions(); // start the stored procedure
+  getDocuments(); // start the stored procedure
 
 }
