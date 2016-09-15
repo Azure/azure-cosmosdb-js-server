@@ -78,5 +78,3 @@ function length(filterOn, filterValue, continuationToken) {
   getSessions(continuationToken);
 
 }
-
-module.exports = length;

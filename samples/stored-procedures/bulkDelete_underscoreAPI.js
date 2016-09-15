@@ -111,5 +111,3 @@ function clear(filterOn, filterValue) {
   getSessions(); // start the stored procedure
 
 }
-
-module.exports = clear;

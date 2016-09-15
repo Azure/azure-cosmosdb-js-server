@@ -1,1 +1,0 @@
-reword f0f61d2 inline predicate function in bulkDelete_underscoreAPI.js
