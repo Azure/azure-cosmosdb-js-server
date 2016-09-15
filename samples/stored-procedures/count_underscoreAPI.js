@@ -1,7 +1,7 @@
 /**
  * A stored procedure for Azure DocumentDB which gets a count of the session documents using the .filter() method of the collection.
  * @function
- * @param  {String} filterOn = 'type'         The key to filter documents on for deletion.
+ * @param  {String} filterOn = 'type'         The key to filter documents on for counting.
  * @param  {String} filterValue = 'session'   The value that a document's filter key must have to be counted
  * @param  {String} [continuationToken]       The previous continuation token, if any was passed
  * @return {responseBody}
