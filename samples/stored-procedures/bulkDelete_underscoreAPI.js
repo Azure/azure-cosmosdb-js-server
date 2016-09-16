@@ -1,13 +1,15 @@
 /**
  * A stored procedure for Azure DocumentDB which deletes documents with a specified filter key and value
  * @function
- * @param  {Object} filterObj = {}      An object containing the attributes and values to filter documents on. A document must have each of the matching attributes and values in this object to be deleted. A special case is made for a value of 'any'. This will delete documents which have the given attribute, regardless of its value. Passing an empty or undefined filterObj will delete all the documents in the collection.
+ * @param {String} [filterKey]            A key to filter documents on. Only documents with the specified key are deleted. If no key is provided, all documents are deleted. If you would like to also specify a value for this key, pass the filterValue parameter as well. The filterKey parameter must be pesent if the filterValue is present.
+ * @param {Any} [filterValue]           If provided, the value that the filterKey must have in order for the document to be deleted. If no filterValue is provided, all documents with the specified filterKey are deleted.
  * @return {responseBody}
  */
-function bulkDelete(filterObj) {
+function bulkDelete(filterKey, filterValue) {
 
-  // set default filter object
-  filterObj = filterObj || {};
+  if (filterValue && !filterKey) {
+    throw new Error('If the "filterValue" parameter is provided, the "filterKey" parameter must be provided as well.');
+  }
 
   const response = __.response; // get the response object
 
@@ -98,10 +100,13 @@ function bulkDelete(filterObj) {
     // NB: The filter function must be inlined in order to take advantage of index
     // (otherwise it will be a full scan).
     const accepted = __.filter(function filter(doc) {
-      return Object.keys(filterObj).every(function checkProperty(filterKey) {
-        return doc.hasOwnProperty(filterKey)
-            && (doc[filterKey] === filterObj[filterKey] || filterKey === 'any');
-      });
+
+      if (filterValue) {
+        return doc[filterKey] === filterValue;
+      }
+
+      return doc.hasOwnProperty(filterKey);
+
     }, { continuation: continuationToken }, filterHandler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation

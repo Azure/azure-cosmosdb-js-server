@@ -1,14 +1,16 @@
 /**
- * A stored procedure for Azure DocumentDB which gets a count of documents in a collection using the .filter() method of the collection.
+ * A stored procedure for Azure DocumentDB which counts documents with a specified filter key and value
  * @function
- * @param  {Object} filterObj = {}          An object containing the attributes and values to filter documents on. A document must have each of the matching attributes and values in this object to be returned. A special case is made for a value of 'any'. This will return documents which have the given attribute, regardless of its value.
- * @param  {String} [continuationToken]       The previous continuation token, if any was passed
+ * @param {String} [filterKey]            A key to filter documents on. Only documents with the specified key are returned. If no key is provided, all documents are returned. If you would like to also specify a value for this key, pass the filterValue parameter as well. This parameter must be pesent if the filterValue is present.
+ * @param {Any} [filterValue]             If provided, the value that the filterKey must have in order for the document to be returned. If no filterValue is provided, all documents with the specified filterKey are returned.
+ * @param {String} [continuationToken]    A continuation token, if one was returned from the previous request.
  * @return {responseBody}
  */
-function count(filterObj, continuationToken) {
+function count(filterKey, filterValue, continuationToken) {
 
-  // set default filter object
-  filterObj = filterObj || {};
+  if (filterValue && !filterKey) {
+    throw new Error('If the "filterValue" parameter is provided, the "filterKey" parameter must be provided as well.');
+  }
 
   const response = __.response; // get the response object
 
@@ -61,10 +63,13 @@ function count(filterObj, continuationToken) {
 
     // filter the collection for documents using the filter object
     const accepted = __.filter(function filter(doc) {
-      return Object.keys(filterObj).every(function checkProperty(filterKey) {
-        return doc.hasOwnProperty(filterKey)
-            && (doc[filterKey] === filterObj[filterKey] || filterKey === 'any');
-      });
+
+      if (filterValue) {
+        return doc[filterKey] === filterValue;
+      }
+
+      return doc.hasOwnProperty(filterKey);
+
     }, { continuation: continuationToken }, filterHandler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation
