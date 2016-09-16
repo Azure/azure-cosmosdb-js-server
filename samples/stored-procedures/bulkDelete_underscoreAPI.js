@@ -103,9 +103,11 @@ function bulkDelete(filterKey, filterValue) {
 
       if (filterValue) {
         return doc[filterKey] === filterValue;
+      } else if (filterKey) {
+        return doc.hasOwnProperty(filterKey);
       }
 
-      return doc.hasOwnProperty(filterKey);
+      return true;
 
     }, { continuation: continuationToken }, filterHandler);
 
