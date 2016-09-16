@@ -4,7 +4,7 @@
  * @param  {Object} filterObj = {}      An object containing the attributes and values to filter documents on. A document must have each of the matching attributes and values in this object to be deleted. A special case is made for a value of 'any'. This will delete documents which have the given attribute, regardless of its value. Passing an empty or undefined filterObj will delete all the documents in the collection.
  * @return {responseBody}
  */
-function clear(filterObj) {
+function bulkDelete(filterObj) {
 
   // set default filter object
   filterObj = filterObj || {};
@@ -71,7 +71,7 @@ function clear(filterObj) {
      * @param  {String} info.continuation   The continuation token, if any was passed
      * @return {responseBody}
      */
-    const handler = function handler(err, docs, info) {
+    const filterHandler = function filterHandler(err, docs, info) {
       if (err) throw err;
 
       if (docs.length > 0) {
@@ -102,7 +102,7 @@ function clear(filterObj) {
         return doc.hasOwnProperty(filterKey)
             && (doc[filterKey] === filterObj[filterKey] || filterKey === 'any');
       });
-    }, { continuation: continuationToken }, handler);
+    }, { continuation: continuationToken }, filterHandler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation
     if (!accepted) response.setBody(responseBody);

@@ -5,7 +5,7 @@
  * @param  {String} [continuationToken]       The previous continuation token, if any was passed
  * @return {responseBody}
  */
-function length(filterObj, continuationToken) {
+function count(filterObj, continuationToken) {
 
   // set default filter object
   filterObj = filterObj || {};
@@ -43,7 +43,7 @@ function length(filterObj, continuationToken) {
      * @param  {String} info.continuation   The continuation token, if any was passed
      * @return {responseBody}
      */
-    const handler = function handler(err, docs, info) {
+    const filterHandler = function filterHandler(err, docs, info) {
       if (err) throw err;
 
       // if documents were found, add them to the running documents total
@@ -65,7 +65,7 @@ function length(filterObj, continuationToken) {
         return doc.hasOwnProperty(filterKey)
             && (doc[filterKey] === filterObj[filterKey] || filterKey === 'any');
       });
-    }, { continuation: continuationToken }, handler);
+    }, { continuation: continuationToken }, filterHandler);
 
     // if the filter request is not accepted due to timeout, return the response with a continuation
     if (!accepted) {
