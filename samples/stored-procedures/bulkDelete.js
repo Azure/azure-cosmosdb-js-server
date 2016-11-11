@@ -3,7 +3,7 @@
  * Note: You may need to execute this sproc multiple times (depending whether the sproc is able to delete every document within the execution timeout limit).
  *
  * @function
- * @param {string} query - A query that provides the documents to be deleted (e.g. "SELECT * FROM c WHERE c.founded_year = 2008")
+ * @param {string} query - A query that provides the documents to be deleted (e.g. "SELECT c._self FROM c WHERE c.founded_year = 2008"). Note: For best performance, reduce the minimum # of properties required returned per document (e.g. prefer SELECT c._self over SELECT * )
  * @returns {Object.<number, boolean>} Returns an object with the two properties:<br/>
  *   deleted - contains a count of documents deleted<br/>
  *   continuation - a boolean whether you should execute the sproc again (true if there are more documents to delete; false otherwise).
