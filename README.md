@@ -10,7 +10,7 @@ DocumentDB’s language integrated, transactional execution of JavaScript suppor
 
 * .NET sample code for creating and executing a sproc can be found on our [.NET GitHub repo](https://github.com/Azure/azure-documentdb-net/tree/master/samples/code-samples/ServerSideScripts).
 
-* Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-documentdb-node/tree/master/samples/DocumentDB.Samples.ServerSideScripts).
+* Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-documentdb-node/tree/master/samples/ServerSideScripts).
 
 ## Videos
 
