@@ -14,7 +14,7 @@ Azure Cosmos DB’s language integrated, transactional execution of JavaScript s
 
 ## Videos
 
-https://www.youtube.com/embed/s0cXdHNlVI0 
+https://www.youtube.com/watch?v=s0cXdHNlVI0
 
 
 ## Share
