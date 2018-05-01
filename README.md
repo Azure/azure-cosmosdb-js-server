@@ -1,6 +1,6 @@
-# Microsoft Azure DocumentDB's Server-Side JavaScript
+# Microsoft Azure Cosmos DB's Server-Side JavaScript
 
-DocumentDB’s language integrated, transactional execution of JavaScript supports stored procedures, triggers and user defined functions (UDFs) written natively in JavaScript. This allows developers to write application logic which can be shipped and executed directly on the database storage partitions. JavaScript support at the server side has a number of intrinsic advantages that can be utilized to build rich applications.
+Azure Cosmos DB’s language integrated, transactional execution of JavaScript supports stored procedures, triggers and user defined functions (UDFs) written natively in JavaScript. This allows developers to write application logic which can be shipped and executed directly on the database storage partitions. JavaScript support at the server side has a number of intrinsic advantages that can be utilized to build rich applications.
 
 ## Documentation
 
