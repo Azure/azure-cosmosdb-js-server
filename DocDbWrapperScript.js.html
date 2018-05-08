@@ -30,14 +30,6 @@
 // Code should run in strict mode wherever possible.
 "use strict";
 //---------------------------------------------------------------------------------------------------
-// Create (empty) collection object
-var getContext = (function docDbSetupContextObject() {
-    var context = {};
-    return function () {
-        return context;
-    };
-})();
-//---------------------------------------------------------------------------------------------------
 // Create (empty) console object
 var console = (function docDbSetupConsoleObject() {
     var c = {};
@@ -78,8 +70,12 @@ var ErrorCodes = {
 Object.freeze(ErrorCodes); // don't allow users to change data values since we use these internally as well
 //---------------------------------------------------------------------------------------------------
 var __; // This is alias for collection object, and also contains request and response properties.
+var getContext;
+var __docDbReinitializeContextFunc; // used to return reinitialize function object in case of reusable sesions
 //---------------------------------------------------------------------------------------------------
 (function docDbSetup() {
+    var collectionObjRaw;
+    var contextObj;
 
     function isNullOrUndefined(x) {
         return x === null || x === undefined;
@@ -101,7 +97,7 @@ var __; // This is alias for collection object, and also contains request and re
 
     //---------------------------------------------------------------------------------------------------
     // Create request and response objects
-    (function docDbSetupRequestResponseObjects() {
+    function docDbSetupRequestResponseObjects() {
         var errorMessages = {
             notWritablePrefix: 'Not a writable property: ',
             noNewHeadersPrefix: 'Cannot set new values: ',
@@ -124,6 +120,7 @@ var __; // This is alias for collection object, and also contains request and re
             // response getter
             getResponse: 'getResponse',
         };
+
         //---------------------------------------------------------------------------------------------------
         // This is a map of request/response properties that is created and passed in from 
         // JavaScriptSession.cpp. The keys are property names,
@@ -264,7 +261,7 @@ var __; // This is alias for collection object, and also contains request and re
         var __context = getContext();
 
         // create request map
-        if (__docDbRequestProperties !== undefined) {
+        if (typeof __docDbRequestProperties !== "undefined") {
             var request = new DocDbMap(__docDbRequestProperties);
             __context[methodNames.getRequest] = function () {
                 return request;
@@ -272,16 +269,14 @@ var __; // This is alias for collection object, and also contains request and re
         }
 
         // create response map
-        if (__docDbResponseProperties !== undefined) {
+        if (typeof __docDbResponseProperties !== "undefined") {
             var response = new DocDbMap(__docDbResponseProperties);
             __context[methodNames.getResponse] = function () {
                 return response;
             }
         }
-    })();
-    // cleanup
-    __docDbRequestProperties = undefined;
-    __docDbResponseProperties = undefined;
+    } // docDbSetupRequestResponseObjects.
+
     //---------------------------------------------------------------------------------------------------
     // Add nice interfaces for local store operations
     (function docDbSetupLocalStoreOperations() {
@@ -307,9 +302,6 @@ var __; // This is alias for collection object, and also contains request and re
             jsQuery_wrongPropertyName: 'The property name must be a string and cannot be empty.',
             invalidGeoJSON: 'The value specified by the "%s" parameter is not a valid GeoJSON object. Example of valid GeoJSON object: { "type": "Point", "coordinates": [-122.3331, 47.6097] }.',
             invalidVariableSubstitution: 'First argument to console.log should be a string containing zero or more substitution strings.',
-        };
-        var methodNames = {
-            getCollection: 'getCollection',
         };
         var consoleMethodNames = {
             log: 'log',
@@ -339,17 +331,14 @@ var __; // This is alias for collection object, and also contains request and re
             if (callbackIn !== undefined &amp;&amp; typeof callbackIn !== 'function') {
                 throw new Error(ErrorCodes.BadRequest, sprintf(errorMessages.callbackNotValid, typeof callbackIn));
             } else if (typeof callbackIn === 'function') {
-                callback = callbackIn
+                callback = callbackIn;
             }
 
             return { options: options, callback: callback };
         }
         //---------------------------------------------------------------------------------------------------       
         //The new Document and Attachment interface in server.
-        function DocDbCollection(collectionObjRawIn) {
-            // private data member
-            var collectionObjRaw = collectionObjRawIn;
-
+        function DocDbCollection() {
             // validation helpers
             function validateCollectionLink(collLink) {
                 var collLinkSegments;
@@ -1206,14 +1195,14 @@ var __; // This is alias for collection object, and also contains request and re
         // Set up JS Query/underscore-like API functions.
         var setupJSQuery;
         if (typeof __docDbJSQueryEnabled !== "undefined") {
-            function DocDb__(collectionObjRaw) {
+            function DocDb__() {
                 var queryFunctionImpls = {
                     "filter": filterImpl,
                     "map": mapImpl,
                     "sortBy": passThroughImpl,
                     "sortByDescending": passThroughImpl,
                     "flatten": flattenImpl,
-                    "unwind" : unwindImpl,
+                    "unwind": unwindImpl,
                 };
 
                 var capturesPropertyName = "captures";
@@ -1454,8 +1443,7 @@ var __; // This is alias for collection object, and also contains request and re
                         isShallow = false;
                     }
 
-                    if (typeof options != "object")
-                    {
+                    if (typeof options != "object") {
                         userCallback = options;
                         options = undefined;
                     }
@@ -1547,7 +1535,7 @@ var __; // This is alias for collection object, and also contains request and re
                             return collectionObjRaw.flatten(
                                 this[capturesPropertyName], undefined, collectionSelector, resultSelector, options.continuation, options.pageSize, options.onComplete);
                         },
-                        { fn: unwindImpl.bind(this), callback: [ collectionSelector, resultSelector ] }
+                        { fn: unwindImpl.bind(this), callback: [collectionSelector, resultSelector] }
                     );
                 }
 
@@ -1683,46 +1671,97 @@ var __; // This is alias for collection object, and also contains request and re
             __docDbJSQueryEnabled = undefined;
         } // if __docDbJSQueryEnabled.
 
-        var __context = getContext();
-
-        var docDbCollection = new DocDbCollection(__docDbCollectionObjectRaw);
-        __context[methodNames.getCollection] = function () {
-            return docDbCollection;
-        };
-
-        if (setupJSQuery) {
-            setupJSQuery.call(docDbCollection, __docDbCollectionObjectRaw);
+        function initializeCollectionObject() {
+            if (typeof __docDbCollectionObjectRaw !== "undefined") {
+                collectionObjRaw = __docDbCollectionObjectRaw;
+                __docDbCollectionObjectRaw = undefined;
+            }
         }
 
-        __ = Object.create(docDbCollection);
-        if (__context.getRequest) __.request = __context.getRequest();
-        if (__context.getResponse) __.response = __context.getResponse();
+        initializeCollectionObject();
 
-        if (__.request &amp;&amp; __.request["get" + scriptLoggingRequestHeaderName] &amp;&amp; __.request.getValue(scriptLoggingRequestHeaderName) === "true") {
-            console[consoleMethodNames.log] = function (logArgs) {
-                if (arguments.length &lt; 1) {
-                    throw new Error(ErrorCodes.BadRequest, sprintf(errorMessages.invalidFunctionCall, 'log', 1, arguments.length));
-                } else if (arguments.length === 1) {
-                    if (__context.getResponse) {
-                        __context.getResponse().appendValue(scriptLoggingResponseHeaderName, logArgs);
-                    }
-                } else {
-                    if (typeof arguments[0] == "string") {
-                        if (__context.getResponse) {
-                            __context.getResponse().appendValue(scriptLoggingResponseHeaderName, sprintf.apply(this, arguments));
+        // This object contains all the CosmosDB JavaScript APIs. This object is not exposed directly instead it is 
+        // returned when getContext().getCollection() is called and is also added as __proto__ object to __
+        var docDbCollection = new DocDbCollection();
+
+        if (setupJSQuery) {
+            setupJSQuery.call(docDbCollection);
+        }
+
+        // Create __ object with docDbCollection as the prototype
+        __ = Object.create(docDbCollection);
+
+        getContext = function () { return contextObj; };
+
+        // Purely virtual but we need to re-create it every time, as req/resp may be missing.
+        function DocDbContext() {
+            this.getCollection = function () { return docDbCollection; }
+            this.abort = function (err) { collectionObjRaw.abort(err); }
+        }
+
+        // This method initializes context, request and response objects. We create a function object as this function will be used to
+        // re-initialize these objects in scenarios where the same session is used multiple times. This is achieved by returning this 
+        // function object to the caller of the script to use during re-initialize. Refer __docDbReinitializableSession object and 
+        // DocDbWrapperScriptReinitialize.js for more details.
+        function setupContextObjects() {
+            if (typeof __docDbCollectionObjectRaw !== "undefined") {
+                initializeCollectionObject();
+            }
+            contextObj = new DocDbContext();
+            docDbSetupRequestResponseObjects();
+
+            // Create Request and Response properties in __ 
+            if (contextObj.getRequest) {
+                __.request = contextObj.getRequest();
+            } else if (__.request) {
+                delete __.request;
+            }
+
+            if (contextObj.getResponse) {
+                __.response = contextObj.getResponse();
+            } else if (__.response) {
+                delete __.response;
+            }
+
+            // Setup console log method
+            if (__.request &amp;&amp; __.request["get" + scriptLoggingRequestHeaderName] &amp;&amp; __.request.getValue(scriptLoggingRequestHeaderName) === "true") {
+                console[consoleMethodNames.log] = function (logArgs) {
+                    if (arguments.length &lt; 1) {
+                        throw new Error(ErrorCodes.BadRequest, sprintf(errorMessages.invalidFunctionCall, 'log', 1, arguments.length));
+                    } else if (arguments.length === 1) {
+                            if (contextObj.getResponse) {
+                                contextObj.getResponse().appendValue(scriptLoggingResponseHeaderName, logArgs);
                         }
                     } else {
-                        throw new Error(ErrorCodes.BadRequest, errorMessages.invalidVariableSubstitution);
+                        if (typeof arguments[0] == "string") {
+                                if (contextObj.getResponse) {
+                                    contextObj.getResponse().appendValue(scriptLoggingResponseHeaderName, sprintf.apply(this, arguments));
+                            }
+                        } else {
+                            throw new Error(ErrorCodes.BadRequest, errorMessages.invalidVariableSubstitution);
+                        }
                     }
                 }
+            } else {
+                console[consoleMethodNames.log] = function () { };
             }
-        } else {
-            console[consoleMethodNames.log] = function () { };
+
+            // cleanup global objects
+            if (typeof __docDbRequestProperties != "undefined") __docDbRequestProperties = undefined;
+            if (typeof __docDbResponseProperties != "undefined") __docDbResponseProperties = undefined;
+        }
+
+        setupContextObjects();
+
+        // If the wrapper script is run in a re-initializable session (system sproc session), then we need to return the setupContextObjects function to the caller.
+        if (typeof __docDbReinitializableSession !== "undefined") {
+            if (__docDbReinitializableSession) {
+                __docDbReinitializeContextFunc = setupContextObjects;
+            }
+            __docDbReinitializableSession = undefined;
         }
     })(); // docDbSetupLocalStoreOperations.
 
-    // cleanup
-    __docDbCollectionObjectRaw = undefined;
 })(); // docDbSetup.
 //---------------------------------------------------------------------------------------------------
 //------------------------------------------------- Documentation Types -----------------------------
@@ -2138,6 +2177,15 @@ function(doc){ return doc.name; }
  *   @returns {Collection} Object that provides server-side access to DocumentDB database. It supports operations on documents and attachments in the collection.
 */
 
+/**  Terminates the script and rolls back the transaction. The script is executed in the context of a transaction, which can be rolled back by using this method. This method is the only way to prevent script transaction from committing in promise callback. For non-promise scenarios, to abort the transaction, using unhandled exception is more recommemded than this.
+ *   @name abort
+ *   @function
+ *   @instance
+ *   @memberof Context
+*    @param {Object} err                                  -         The exception object to serve as the reason of the abort.
+*    @example getContext().abort(new Error('abort'));
+*/
+
 /** Gets the request body.
  *  @name getBody
  *  @function
@@ -2262,7 +2310,7 @@ function(doc){ return doc.name; }
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 24 2018 17:09:23 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 07 2018 19:55:04 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
