@@ -1,8 +1,8 @@
-#Introduction
+# Introduction
 
 This folder contains utilities that are useful when constructing DocumentDB server-side stored procedures, triggers and user defined functions.
 
-##Utils
+## Utils
 
 
 - DocDBWrapperScript.js
