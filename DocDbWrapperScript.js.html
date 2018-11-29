@@ -261,7 +261,7 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
         var __context = getContext();
 
         // create request map
-        if (typeof __docDbRequestProperties !== "undefined") {
+        if (__docDbRequestProperties !== undefined) {
             var request = new DocDbMap(__docDbRequestProperties);
             __context[methodNames.getRequest] = function () {
                 return request;
@@ -269,7 +269,7 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
         }
 
         // create response map
-        if (typeof __docDbResponseProperties !== "undefined") {
+        if (__docDbResponseProperties !== undefined) {
             var response = new DocDbMap(__docDbResponseProperties);
             __context[methodNames.getResponse] = function () {
                 return response;
@@ -299,6 +299,7 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             jsQuery_invalidCollectionSelectorArguments: '"collectionSelector" requires one argument.',
             jsQuery_invalidResultSelectorArguments: '"resultSelector" requires two arguments.',
             jsQuery_missingPredicate: 'The predicate/transform function must be provided.',
+            jsQuery_missingCallbackWhenNoResponse: 'The callback function must be provided for scenarios, such as pre-trigger, when response object is not available.',
             jsQuery_wrongPropertyName: 'The property name must be a string and cannot be empty.',
             invalidGeoJSON: 'The value specified by the "%s" parameter is not a valid GeoJSON object. Example of valid GeoJSON object: { "type": "Point", "coordinates": [-122.3331, 47.6097] }.',
             invalidVariableSubstitution: 'First argument to console.log should be a string containing zero or more substitution strings.',
@@ -518,8 +519,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @instance
             * @memberof Collection
             * @param {string} documentLink - resource link of the document to read
-            * @param {ReadOptions} [options] - optional read options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.ReadOptions} [options] - optional read options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the read has been queued, false if it is not queued because of a pending timeout.
             */
             this.readDocument = function (documentLink, options, callback) {
@@ -561,8 +562,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @instance
             * @memberof Collection
             * @param {string} collectionLink - resource link of the collection whose documents are being read
-            * @param {FeedOptions} [options] - optional read feed options
-            * @param {FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.FeedOptions} [options] - optional read feed options
+            * @param {Collection.FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the read has been queued, false if it is not queued because of a pending timeout.
             */
             this.readDocuments = function readDocuments(collectionLink, options, callback) {
@@ -603,8 +604,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @memberof Collection
             * @param {string} collectionLink - resource link of the collection whose documents are being queried
             * @param {string} filterQuery - SQL query string. This can also be a JSON object to pass in a parameterized query along with the values.
-            * @param {FeedOptions} [options] - optional query options.
-            * @param {FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.FeedOptions} [options] - optional query options.
+            * @param {Collection.FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the query has been queued, false if it is not queued because of a pending timeout.
             */
             this.queryDocuments = function (collectionLink, filterQuery, options, callback) {
@@ -651,8 +652,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @memberof Collection
             * @param {string} collectionLink - resource link of the collection under which the document will be created
             * @param {Object} body - &lt;p>body of the document&lt;br />The "id" property is required and will be generated automatically if not provided (this behaviour can be overriden using the CreateOptions). Any other properties can be added.&lt;/p>
-            * @param {CreateOptions} [options] - optional create options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.CreateOptions} [options] - optional create options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the create has been queued, false if it is not queued because of a pending timeout.
             */
             this.createDocument = function (collectionLink, body, options, callback) {
@@ -723,8 +724,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @memberof Collection
             * @param {string} collectionLink - resource link of the collection under which the document will be upserted
             * @param {Object} body - &lt;p>body of the document&lt;br />The "id" property is required and will be generated automatically if not provided (this behaviour can be overriden using the UpsertOptions). Any other properties can be added.&lt;/p>
-            * @param {UpsertOptions} [options] - optional upsert options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.UpsertOptions} [options] - optional upsert options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the upsert has been queued, false if it is not queued because of a pending timeout.
             */
             this.upsertDocument = function (collectionLink, body, options, callback) {
@@ -796,8 +797,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @memberof Collection
             * @param {string} documentLink - resource link of the document
             * @param {Object} document - new document body
-            * @param {ReplaceOptions} [options] - optional replace options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Colleciton.ReplaceOptions} [options] - optional replace options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the replace has been queued, false if it is not queued because of a pending timeout.
             */
             this.replaceDocument = function (documentLink, document, options, callback) {
@@ -842,8 +843,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @instance
             * @memberof Collection
             * @param {string} documentLink - resource link of the document to delete
-            * @param {DeleteOptions} [options] - optional delete options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.DeleteOptions} [options] - optional delete options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the delete has been queued, false if it is not queued because of a pending timeout.
             */
             this.deleteDocument = function (documentLink, options, callback) {
@@ -885,8 +886,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @instance
             * @memberof Collection
             * @param {string} attachmentLink - resource link of the attachment to read
-            * @param {ReadOptions} [options] - optional read options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.ReadOptions} [options] - optional read options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the read has been queued, false if it is not queued because of a pending timeout.
             */
             this.readAttachment = function (attachmentLink, options, callback) {
@@ -928,8 +929,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @instance
             * @memberof Collection
             * @param {string} documentLink - resource link of the document whose attachments are being read
-            * @param {FeedOptions} [options] - optional read feed options
-            * @param {FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.FeedOptions} [options] - optional read feed options
+            * @param {Collection.FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the read has been queued, false if it is not queued because of a pending timeout.
             */
             this.readAttachments = function (documentLink, options, callback) {
@@ -970,8 +971,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @memberof Collection
             * @param {string} documentLink - resource link of the document whose attachments are being queried
             * @param {string} query - SQL query string. This can also be a JSON object to pass in a parameterized query along with the values.
-            * @param {FeedOptions} [options] - optional query options
-            * @param {FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.FeedOptions} [options] - optional query options
+            * @param {Collection.FeedCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the query has been queued, false if it is not queued because of a pending timeout.
             */
             this.queryAttachments = function (documentLink, filterQuery, options, callback) {
@@ -1018,8 +1019,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @param {Object} body - &lt;p>metadata that defines the attachment media like media, contentType&lt;br />It can include any other properties as part of the metedata.&lt;/p>
             * @param {string} body.contentType - MIME contentType of the attachment
             * @param {string} body.media - media link associated with the attachment content
-            * @param {CreateOptions} [options] - optional create options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.CreateOptions} [options] - optional create options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the create has been queued, false if it is not queued because of a pending timeout.
             */
             this.createAttachment = function (documentLink, body, options, callback) {
@@ -1064,8 +1065,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @param {Object} body - &lt;p>metadata that defines the attachment media like media, contentType&lt;br />It can include any other properties as part of the metedata.&lt;/p>
             * @param {string} body.contentType - MIME contentType of the attachment
             * @param {string} body.media - media link associated with the attachment content
-            * @param {UpsertOptions} [options] - optional upsert options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.UpsertOptions} [options] - optional upsert options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the upsert has been queued, false if it is not queued because of a pending timeout.
             */
             this.upsertAttachment = function (documentLink, body, options, callback) {
@@ -1110,8 +1111,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @memberof Collection
             * @param {string} attachmentLink - resource link of the attachment to be replaced
             * @param {Object} attachment - new attachment body
-            * @param {ReplaceOptions} [options] - optional replace options
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Colleciton.ReplaceOptions} [options] - optional replace options
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the replace has been queued, false if it is not queued because of a pending timeout.
             */
             this.replaceAttachment = function (attachmentLink, attachment, options, callback) {
@@ -1156,8 +1157,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             * @instance
             * @memberof Collection
             * @param {string} attachmentLink - resource link of the attachment to be deleted
-            * @param {DeleteOptions} [options] - optional delete options.
-            * @param {RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
+            * @param {Collection.DeleteOptions} [options] - optional delete options.
+            * @param {Collection.RequestCallback} [callback] - &lt;p>optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown.&lt;/p>
             * @return {Boolean} True if the delete has been queued, false if it is not queued because of a pending timeout.
             */
             this.deleteAttachment = function (attachmentLink, options, callback) {
@@ -1261,6 +1262,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
                 function defaultUserCallback(err, feed, options) {
                     // If user callback is not specified, results go response body (as append) and options are ignored. Simple usage.
                     if (err) throw err;
+                    if (!getContext().getResponse) throw new Error(ErrorCodes.BadRequest, errorMessages.jsQuery_missingCallbackWhenNoResponse);
+
                     getContext().getResponse().appendBody(JSON.stringify(feed));
                 }
 
@@ -1747,8 +1750,8 @@ var __docDbReinitializeContextFunc; // used to return reinitialize function obje
             }
 
             // cleanup global objects
-            if (typeof __docDbRequestProperties != "undefined") __docDbRequestProperties = undefined;
-            if (typeof __docDbResponseProperties != "undefined") __docDbResponseProperties = undefined;
+            __docDbRequestProperties = undefined;
+            __docDbResponseProperties = undefined;
         }
 
         setupContextObjects();
@@ -1793,10 +1796,10 @@ if(!result.isAccepted) throw new Error("the call was not accepted");
  * @function
  * @instance
  * @memberof Collection
- * @param {FilterPredicate} predicate - Predicate function defining the filter 
- * @param {FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @param {Collection.FilterPredicate} predicate - Predicate function defining the filter 
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
  * @example // Example 1: get documents(people) with age &lt; 30.
 var result = __.filter(function(doc) { return doc.age &lt; 30; });
 if(!result.isAccepted) throw new Error("The call was not accepted");
@@ -1824,10 +1827,10 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @function
  * @instance
  * @memberof Collection
- * @param {MapPredicate} predicate - Predicate function defining the projection
- * @param {FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @param {Collection.ProjectionPredicate} predicate - Predicate function defining the projection
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
  * @example // Example 1: select only name and age for each document (person).
 var result = __.map(function(doc){ return { name: doc.name, age: doc.age}; });
 if(!result.isAccepted) throw new Error("The call was not accepted");
@@ -1849,9 +1852,9 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @instance
  * @memberof Collection
  * @param {string} propertyName - Name of the property to pluck from all documents in the current collection
- * @param {FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
  * @example // Get documents (people) with age &lt; 30 and select only name.
 var result = __.chain()
     .filter(function(doc) { return doc.age &lt; 30; })
@@ -1869,9 +1872,9 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @instance
  * @memberof Collection
  * @param {Boolean} [isShallow] - If true, flattens only the first level of nested arrays (false by default)
- * @param {FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
  * @example // Get documents (people) with age &lt; 30, select tags (an array property)
 // and flatten the result into one array for all documents.
 var result = __.chain()
@@ -1883,6 +1886,91 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
 */
 
 /**
+ * &lt;p>Perfoms a join with inner collection with both top level document item and inner collection item added to the result projection.&lt;br/>
+ * When resultSelector is provided, resultSelector is called for each pair of &amp;lt;current document, inner collection item&amp;gt;.&lt;/p>
+ * When resultSelector is not provided, __.unwind() just adds inner collection to the result projection. In this case unwind() is equivalent to map(innerCollectionSelector).flatten().
+ * Calls to unwind can be chained to perform multiple joins.
+ * @name unwind
+ * @function
+ * @instance
+ * @memberof Collection
+ * @param {Collection.ProjectionPredicate} innerCollectionSelector - Predicate function defining the projection for inner collection.
+ * @param {Collection.ResultSelectorPredicate} [resultSelector] - Optional predicate> function defining result projection.
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @example 
+// Get &lt;customer, kids, pet> tuples from customer collection:
+//
+var result = __.chain()
+      .unwind(c => c.kids, (c, k) => { return { customer: c, kid: k } })
+      .unwind(ck => ck.kid.pets, (ck, p) => { return { customer: ck.customer.name, kid: ck.kid.name, pet: p.name }})
+      .value();
+if(!result.isAccepted) throw new Error("one of the calls was not accepted");
+//
+// With the following input data:
+// [{
+//         "id": "1",
+//         "name": "Alex",
+//         "kids": [{
+//                 "name": "Bob",
+//                 "pets": [
+//                     { "name": "Chucky" },
+//                     { "name": "Chauncey" },
+//                 ]
+//             },
+//             {
+//                 "name": "Bill",
+//                 "pets": [
+//                     { "name": "Charcoral" },
+//                     { "name": "Cookie" }
+//                 ]
+//             }
+//         ]
+//     },
+//     {
+//         "id": "2",
+//         "name": "Alice",
+//         "kids": [{
+//                 "name": "Barbara",
+//                 "pets": [
+//                     { "name": "Copper" },
+//                     { "name": "Curly" }
+//                 ]
+//             },
+//             {
+//                 "name": "Beth",
+//                 "pets": [
+//                     { "name": "Cutie" }
+//                 ]
+//             }
+//         ]
+//     }
+// ]
+//
+// The result would be:
+//
+// [
+//     { "customer": "Alex", "kid": "Bob", "pet": "Chucky" },
+//     { "customer": "Alex", "kid": "Bob", "pet": "Chauncey" },
+//     { "customer": "Alex", "kid": "Bill", "pet": "Charcoral" },
+//     { "customer": "Alex", "kid": "Bill", "pet": "Cookie" },
+//     { "customer": "Alice", "kid": "Barbara", "pet": "Copper" },
+//     { "customer": "Alice", "kid": "Barbara", "pet": "Curly" },
+//     { "customer": "Alice", "kid": "Beth", "pet": "Cutie" }
+// ]
+//
+// This is equivalent to:
+// SELECT
+//   c.name as customer,
+//   k.name as kid,
+//   p.name as pet
+// FROM customer c
+// JOIN k in c.kids
+// JOIN p in k.pets
+*/
+
+/**
  * &lt;p>Produce a new set of documents by sorting the documents in the input document stream in ascending order using the given predicate.&lt;br/>
  * When sortBy is called by itself, the input document stream is the set of all documents in the current document collection.
  * When used in a &lt;a href="#chain">chained call&lt;/a>, the input document stream is the set of documents returned from the previous query function.&lt;/p>
@@ -1890,10 +1978,10 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @function
  * @instance
  * @memberof Collection
- * @param {SortByPredicate} predicate - Predicate function defining the property to sort by.
- * @param {FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @param {Collection.SortByPredicate} predicate - Predicate function defining the property to sort by.
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
   * @see &lt;a href="#sortByDescending">sortByDescending&lt;/a> to sort in descending order.
   * @example // Example 1: sort documents (people) by age
 var result = __.sortBy(function(doc){ return doc.age; })
@@ -1915,10 +2003,10 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @function
  * @instance
  * @memberof Collection
- * @param {SortByPredicate} predicate - Predicate function defining the property to sort by.
- * @param {FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @param {Collection.SortByPredicate} predicate - Predicate function defining the property to sort by.
+ * @param {Collection.FeedOptions} [options] - Optional query options. Should not be used in a &lt;a href="#chain">chained call&lt;/a>.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation.&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;br/>Should not be used in a &lt;a href="#chain">chained call&lt;/a>.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
  * @see &lt;a href="#sortBy">sortBy&lt;/a> to sort in ascending order.
  * @example // Example 1: sort documents (people) by age in descending order
 var result = __.sortByDescending(function(doc) { return doc.age; })
@@ -1938,7 +2026,7 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @function
  * @instance
  * @memberof Collection
- * @return {QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted. Can be used in a &lt;a href="#chain">chained call&lt;/a> to call further queries.
  * @see The &lt;a href="#value">value&lt;/a> call.
  * @example var name = "John";
 var result = __.chain()
@@ -1955,9 +2043,9 @@ if(!result.isAccepted) throw new Error("The call was not accepted");
  * @function
  * @instance
  * @memberof Collection
- * @param {FeedOptions} [options] - Optional query options for the entire chained call.
- * @param {FeedCallback} [callback] - &lt;p>Optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;/p>
- * @return {QueryResponse} - Response which contains whether or not the query was accepted.
+ * @param {Collection.FeedOptions} [options] - Optional query options for the entire chained call.
+ * @param {Collection.FeedCallback} [callback] - &lt;p>Optional callback for the operation&lt;br/>If no callback is provided, any error in the operation will be thrown&lt;br/>and the result document set will be written to the &lt;a href="Response.html">Response&lt;/a> body.&lt;/p>
+ * @return {Collection.QueryResponse} - Response which contains whether or not the query was accepted.
  * @see The &lt;a href="#chain">chain&lt;/a> call.
  * @example // Example 1: use defaults: the result goes to the response body.
 __.chain()
@@ -2085,13 +2173,24 @@ function(continuationToken) {
 */
 
 /**
-* The predicate function for a &lt;a href="#map">map/projection&lt;/a>, which maps the input document's properties into a new document object.
-* @typedef {function} MapPredicate
+* The predicate function for a &lt;a href="#map">map/projection&lt;/a>, &lt;a href="#unwind">unwind/innerCollectionSelector&lt;/a>, which maps the input document's properties into a new document object.
+* @typedef {function} ProjectionPredicate
 * @param {Object} document                                  -         Input document.
 * @return {Object}                                          -         Output document, containing only the mapped properties. This output document will be added to the output result of the map call.
 * @memberof Collection
 * @see The &lt;a href="#map">map&lt;/a> call.
 * @example function(doc) { return { name: doc.name, age: doc.age }; }
+*/
+
+/**
+* The predicate function for a &lt;a href="#unwind">unwind/resultSelector&lt;/a>, which maps the input document's properties into a new document object.
+* @typedef {function} ResultSelectorPredicate
+* @param {Object} documentItem                           -         Input document or top level item from previous projection.
+* @param {Object} innerCollectionItem                    -         The item selected from inner collection.
+* @return {Object}                                       -         Output document, containing only the mapped properties. This output document will be added to the output result of the map call.
+* @memberof Collection
+* @see The &lt;a href="#unwind">unwind&lt;/a> call.
+* @example function(customer, child) { return { customerName: customer.name, childName: child.name }; }
 */
 
 /**
@@ -2310,7 +2409,7 @@ function(doc){ return doc.name; }
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon May 07 2018 19:55:04 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Nov 28 2018 11:13:31 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
