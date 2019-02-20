@@ -1,5 +1,5 @@
 /**
- * A DocumentDB stored procedure that updates a document by id, using a similar syntax to MongoDB's update operator.<br/>
+ * A Cosmos DB stored procedure that updates a document by id, using a similar syntax to MongoDB's update operator.<br/>
  * <br/>
  * The following operations are supported:<br/>
  * <br/>
