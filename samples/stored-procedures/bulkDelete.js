@@ -1,5 +1,5 @@
 ﻿/**
- * A DocumentDB stored procedure that bulk deletes documents for a given query.<br/>
+ * A Cosmos DB stored procedure that bulk deletes documents for a given query.<br/>
  * Note: You may need to execute this sproc multiple times (depending whether the sproc is able to delete every document within the execution timeout limit).
  *
  * @function
