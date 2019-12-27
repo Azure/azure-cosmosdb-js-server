@@ -10,7 +10,7 @@ DocumentDB’s language integrated, transactional execution of JavaScript suppor
 
 * .NET sample code for creating and executing a sproc can be found on our [.NET GitHub repo](https://github.com/Azure/azure-cosmos-dotnet-v3/tree/master/Microsoft.Azure.Cosmos.Samples/Usage/ServerSideScripts).
 
-* Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-cosmosdb-node/tree/master/samples/ServerSideScripts).
+* Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-sdk-for-js/tree/master/sdk/cosmosdb/cosmos/samples/ServerSideScripts).
 
 ## Videos
 
