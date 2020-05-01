@@ -4,17 +4,17 @@ Azure Cosmos DB’s language integrated, transactional execution of JavaScript s
 
 ## Documentation
 
-* Official documentation can be found the [Azure website](http://azure.microsoft.com/en-us/documentation/articles/documentdb-programming/)
+* Official documentation can be found the [Azure website](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs)
 
-* JSDocs for the Server-Side JavaScript SDK can be found [here](https://azure.github.io/azure-cosmosdb-js-server/)
+* JSDocs for the Server-Side JavaScript SDK can be found [here](http://azure.github.io/azure-cosmosdb-js-server/)
 
-* .NET sample code for creating and executing a sproc can be found on our [.NET GitHub repo](https://github.com/Azure/azure-documentdb-net/tree/master/samples/code-samples/ServerSideScripts).
+* .NET sample code for creating and executing a sproc can be found on our [.NET GitHub repo](https://github.com/Azure/azure-cosmos-dotnet-v2/tree/master/samples/code-samples/ServerSideScripts).
 
-* Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-documentdb-node/tree/master/samples/ServerSideScripts).
+* Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-cosmosdb-node/tree/master/samples/ServerSideScripts).
 
 ## Videos
 
-<a href="https://channel9.msdn.com/Blogs/Windows-Azure/Azure-Demo-A-Quick-Intro-to-Azure-DocumentDBs-Server-Side-Javascript"><img src="http://acom.azurecomcdn.net/80C57D/blogmedia/blogmedia/2015/04/20/video-thumbnail-280x160.png"/></a>
+https://www.youtube.com/watch?v=s0cXdHNlVI0
 
 
 ## Share
