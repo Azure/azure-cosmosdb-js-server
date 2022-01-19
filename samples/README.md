@@ -1,4 +1,4 @@
-**Documentation:** http://azure.microsoft.com/en-us/documentation/articles/documentdb-programming/
+**Documentation:** https://docs.microsoft.com/en-us/azure/cosmos-db/stored-procedures-triggers-udfs
 
 Node.js sample code for creating and executing a sproc can be found on our [Node.js GitHub repo](https://github.com/Azure/azure-documentdb-node/tree/master/samples/DocumentDB.Samples.ServerSideScripts).
 
