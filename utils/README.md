@@ -7,15 +7,16 @@ This folder contains utilities that are useful when constructing DocumentDB serv
 
 - DocDBWrapperScript.js
 
-	When building server-side logic in Stored Procedures, Triggers, UDFs etc. it is useful to have Visual Studio IntelliSense to help you out. Using this wrapper file (DocDbWrapperScript.js) you can enable full server-side IntelliSense for the server-side JS SDK. 
+	When building server-side logic in Stored Procedures, Triggers, UDFs etc. it is useful to have Visual Studio IntelliSense to help you out. Using the `DocDbWrapperScript.js` wrapper file you can enable full server-side IntelliSense for the server-side JS SDK.  
 
-	In the JS file you are working on, provide the following path to the file explicitly in comments.
+	Save the `DocDbWrapperScript.js` file into your solution, and then reference it in the JS file you are working on.  Provide the following path to the file explicitly in comments.  You must use a relative path for the IntelliSense to work ([more here](https://msdn.microsoft.com/en-us/library/bb385682.aspx)).
 	
-	```
-	    <reference group="Generic" />
-	    <reference path="C:\Program Files (x86)\Microsoft Visual Studio 12.0\JavaScript\References\DocDbWrapperScript.js" />
+	```xml
+	<reference path="DocDbWrapperScript.js" />
 	```
 
-	This can also be set in Visual Studio for the "Generic" Reference group - 
-	
+	This can also be set in Visual Studio for the "Generic" Reference group:
+
+	```
 	Tools | Options | Text Editor | JavaScript | IntelliSense | References
+	```
