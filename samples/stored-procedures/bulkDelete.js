@@ -17,33 +17,16 @@ function bulkDeleteSproc(query) {
         continuation: true
     };
 
-    // Validate input.
-    if (!query) throw new Error("The query is undefined or null.");
-
-    tryQueryAndDelete();
+       tryQueryAndDelete();
 
     // Recursively runs the query w/ support for continuation tokens.
     // Calls tryDelete(documents) as soon as the query returns documents.
     function tryQueryAndDelete(continuation) {
         var requestOptions = {continuation: continuation};
 
-        var isAccepted = collection.queryDocuments(collectionLink, query, requestOptions, function (err, retrievedDocs, responseOptions) {
-            if (err) throw err;
-
-            if (retrievedDocs.length > 0) {
-                // Begin deleting documents as soon as documents are returned form the query results.
-                // tryDelete() resumes querying after deleting; no need to page through continuation tokens.
-                //  - this is to prioritize writes over reads given timeout constraints.
-                tryDelete(retrievedDocs);
-            } else if (responseOptions.continuation) {
-                // Else if the query came back empty, but with a continuation token; repeat the query w/ the token.
-                tryQueryAndDelete(responseOptions.continuation);
-            } else {
-                // Else if there are no more documents and no continuation token - we are finished deleting documents.
-                responseBody.continuation = false;
-                response.setBody(responseBody);
-            }
-        });
+        var isAccepted = (query && query.length) ?
+			collection.queryDocuments(collectionLink, query, requestOptions, onReadDocuments):
+			collection.readDocuments(collectionLink, requestOptions, onReadDocuments);
 
         // If we hit execution bounds - return continuation: true.
         if (!isAccepted) {
@@ -51,6 +34,24 @@ function bulkDeleteSproc(query) {
         }
     }
 
+	function onReadDocuments(err, retrievedDocs, responseOptions) {
+		if (err) throw err;
+
+		if (retrievedDocs.length > 0) {
+			// Begin deleting documents as soon as documents are returned form the query results.
+			// tryDelete() resumes querying after deleting; no need to page through continuation tokens.
+			//  - this is to prioritize writes over reads given timeout constraints.
+			tryDelete(retrievedDocs);
+		} else if (responseOptions.continuation) {
+			// Else if the query came back empty, but with a continuation token; repeat the query w/ the token.
+			tryQueryAndDelete(responseOptions.continuation);
+		} else {
+			// Else if there are no more documents and no continuation token - we are finished deleting documents.
+			responseBody.continuation = false;
+			response.setBody(responseBody);
+		}
+	}
+	
     // Recursively deletes documents passed in as an array argument.
     // Attempts to query for more on empty array.
     function tryDelete(documents) {
@@ -75,4 +76,3 @@ function bulkDeleteSproc(query) {
         }
     }
 }
-
